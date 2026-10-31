@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import fs from 'node:fs';
+import {seed,sync,entities,NAV} from '../src/brightloop/model.js';
+const html=fs.readFileSync(new URL('../main.html',import.meta.url),'utf8');
+const script=html.split('<script>')[1].split('</script>')[0];
+const context=vm.createContext({document:{getElementById:()=>({addEventListener(){}}),addEventListener(){}},localStorage:{getItem:()=>null},sessionStorage:{getItem:()=>null}});
+vm.runInContext(script.slice(0,script.indexOf('/* ---------- init ---------- */'))+';db=seed();sync();globalThis.original={db,E,NAV};',context);
+const plain=x=>JSON.parse(JSON.stringify(x));
+test('React preserves every seeded record and invoice balance/status from main.html',()=>{const db=seed();sync(db);assert.deepEqual(plain(db),plain(context.original.db));});
+test('React preserves every role navigation entry and entity field/column definition',()=>{assert.deepEqual(plain(NAV),plain(context.original.NAV));const E=entities(seed());for(const k of Object.keys(E)){assert.deepEqual(plain(E[k]),plain(context.original.E[k]),k);}});
+test('React preserves subscription and invoice validation, pricing and deletion dependencies',()=>{const db=seed(),E=entities(db),old=context.original.E;for(const data of [{start:'2026-01-02',expiry:'2026-01-01'},{start:'2026-01-01',expiry:'2026-01-02'}])assert.equal(E.subscriptions.v(data),old.subscriptions.v(data));for(const data of [{date:'2026-02-02',due:'2026-01-01',amount:10},{date:'2026-01-01',due:'2026-02-01',amount:10},{date:'2026-01-01',due:'2026-02-01',amount:30}])assert.equal(E.invoices.v(data,{paid:20}),old.invoices.v(data,{paid:20}));for(const s of db.subscriptions)assert.deepEqual(E.subscriptions.post(s),plain(old.subscriptions.post(s)));for(const k of ['plans','customers'])for(const r of db[k])assert.equal(E[k].used(r),old[k].used(r));});
