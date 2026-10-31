@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 300" role="img" aria-labelledby="title desc">
+  <title id="title">Cycvera team logo</title>
+  <desc id="desc">A continuous circular mark with three connected billing stages beside the name Cycvera.</desc>
+  <g transform="translate(24 24)">
+    <circle cx="126" cy="126" r="106" fill="#10243A"/>
+    <path d="M183 75a73 73 0 1 0 14 75" fill="none" stroke="#5FE1C4" stroke-width="17" stroke-linecap="round"/>
+    <path d="M181 47v33h33" fill="none" stroke="#5FE1C4" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M99 126h54" stroke="#F7FAFC" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="99" cy="126" r="10" fill="#F7FAFC"/>
+    <circle cx="126" cy="126" r="10" fill="#F7FAFC"/>
+    <circle cx="153" cy="126" r="10" fill="#F7FAFC"/>
+  </g>
+  <text x="288" y="163" fill="#10243A" font-family="Inter, Aptos, Arial, sans-serif" font-size="104" font-weight="750" letter-spacing="-5">Cycvera</text>
+  <text x="294" y="211" fill="#547185" font-family="Inter, Aptos, Arial, sans-serif" font-size="24" font-weight="600" letter-spacing="3.5">EVERY CYCLE, IN SYNC</text>
+</svg>

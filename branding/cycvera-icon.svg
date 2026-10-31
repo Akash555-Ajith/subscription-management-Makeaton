@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Cycvera icon</title>
+  <desc id="desc">A recurring cycle surrounding three connected billing stages.</desc>
+  <circle cx="128" cy="128" r="128" fill="#10243A"/>
+  <path d="M185 77a73 73 0 1 0 14 75" fill="none" stroke="#5FE1C4" stroke-width="17" stroke-linecap="round"/>
+  <path d="M183 49v33h33" fill="none" stroke="#5FE1C4" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M101 128h54" stroke="#F7FAFC" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="101" cy="128" r="10" fill="#F7FAFC"/>
+  <circle cx="128" cy="128" r="10" fill="#F7FAFC"/>
+  <circle cx="155" cy="128" r="10" fill="#F7FAFC"/>
+</svg>
