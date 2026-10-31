@@ -1,0 +1,2 @@
+import {database,get}from'./db.js';import{createUser}from'./auth.js';
+const db=database();if(get(db,"SELECT id FROM users WHERE role='Admin'"))throw Error('An administrator already exists');if(!process.env.ADMIN_EMAIL||!process.env.ADMIN_PASSWORD)throw Error('Set ADMIN_EMAIL and ADMIN_PASSWORD in .env for initial setup');createUser(db,{name:process.env.ADMIN_NAME||'Administrator',email:process.env.ADMIN_EMAIL,password:process.env.ADMIN_PASSWORD},'Admin');console.log('Administrator created. Remove ADMIN_PASSWORD from .env and sign in.');

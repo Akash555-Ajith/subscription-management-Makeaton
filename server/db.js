@@ -1,7 +1,8 @@
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync,mkdirSync} from 'node:fs';
+import {migrate} from './auth.js';
 import {dirname} from 'node:path';
-export function database(path=process.env.DB_PATH||'data/cycvera.sqlite'){if(path!==':memory:')mkdirSync(dirname(path),{recursive:true});const db=new DatabaseSync(path);db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');db.exec(readFileSync(new URL('./migrations/001.sql',import.meta.url),'utf8'));return db}
+export function database(path=process.env.DB_PATH||'data/cycvera.sqlite'){if(path!==':memory:')mkdirSync(dirname(path),{recursive:true});const db=new DatabaseSync(path);db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');db.exec(readFileSync(new URL('./migrations/001.sql',import.meta.url),'utf8'));migrate(db);return db}
 export const all=(db,sql,...args)=>db.prepare(sql).all(...args);
 export const get=(db,sql,...args)=>db.prepare(sql).get(...args);
 export const run=(db,sql,...args)=>db.prepare(sql).run(...args);

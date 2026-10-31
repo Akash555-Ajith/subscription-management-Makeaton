@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 import Auth from './Auth.jsx';
+import Workspace from './Workspace.jsx';
+const modulePages=['Products','Variants','Plans','Taxes','Discounts','Templates','Quotations','Subscriptions','Customers','Staff'];
 
 const money = v => '₹' + Number(v || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
@@ -26,14 +28,9 @@ const post = (path, data) =>
 
 function App() {
   const token = location.pathname.match(/^\/pay\/([a-f0-9]{64})$/)?.[1];
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('cycvera_user') || 'null');
-    } catch {
-      return null;
-    }
-  });
-  const [showAuth, setShowAuth] = useState(!user && !token);
+  const [user,setUser]=useState(null);
+  const [showAuth,setShowAuth]=useState(!token);
+  useEffect(()=>{localStorage.removeItem('cycvera_user');api('/auth/me').then(u=>{if(!u.anonymous){setUser(u);setShowAuth(false)}}).catch(()=>{})},[]);
   const [page, setPage] = useState(token ? 'Pay invoice' : 'Dashboard');
   const [data, setData] = useState(null);
   const [filters, setFilters] = useState({});
@@ -50,17 +47,19 @@ function App() {
 
   function handleLogin(loggedInUser) {
     setUser(loggedInUser);
-    localStorage.setItem('cycvera_user', JSON.stringify(loggedInUser));
+
     setShowAuth(false);
   }
 
-  function handleSignOut() {
+  async function handleSignOut() {
+    await post('/auth/logout');
     setUser(null);
     localStorage.removeItem('cycvera_user');
     setShowAuth(true);
   }
 
   async function load() {
+    if(modulePages.includes(page)) return;
     try {
       const path = token
         ? '/invoices/' + token
@@ -78,8 +77,8 @@ function App() {
 
   useEffect(() => {
     api('/health').then(setHealth).catch(() => {});
-    api('/invoices').then(setInvoices).catch(() => {});
-  }, []);
+    if(user)api('/invoices').then(setInvoices).catch(() => {});
+  }, [user]);
 
   useEffect(() => {
     if (showAuth) return;
@@ -129,7 +128,7 @@ function App() {
     return (
       <Auth
         onLogin={handleLogin}
-        onSkipToDashboard={() => setShowAuth(false)}
+
       />
     );
   }
@@ -178,7 +177,7 @@ function App() {
         </div>
         <div className="group-label">FINANCE WORKSPACE</div>
         <nav className="nav">
-          {['Dashboard', 'Transactions', 'Invoices', 'Subscriptions', 'Customers'].map(p => (
+          {(user?.role==='Customer'?['Dashboard','Transactions','Invoices','Subscriptions']:['Dashboard','Transactions','Invoices','Subscriptions','Customers','Products','Variants','Plans','Taxes','Discounts','Templates','Quotations',...(user?.role==='Admin'?['Staff']:[])]).map(p => (
             <button
               className={page === p ? 'active' : ''}
               onClick={() => {
@@ -236,20 +235,21 @@ function App() {
         </div>
       </aside>
 
-      <main className="main">
+      <main className="main"><select className="mobilemenu secondary" value={page} onChange={e=>{setData(null);setPage(e.target.value)}}>{(user?.role==='Customer'?['Dashboard','Transactions','Invoices','Subscriptions']:['Dashboard','Transactions','Invoices',...modulePages.filter(p=>p!=='Staff'||user?.role==='Admin')]).map(p=><option key={p}>{p}</option>)}</select>
         <div className="heading">
           <div>
             <div className="eyebrow">Cycvera Software · Test mode</div>
             <h1>{page}</h1>
             <p>A clear view of every payment and every billing cycle.</p>
           </div>
-          {page === 'Transactions' && (
+          {page === 'Transactions' && user?.role!=='Customer' && (
             <button className="primary" onClick={() => setManual(true)}>
               + Record offline payment
             </button>
           )}
         </div>
 
+        {modulePages.includes(page)&&user&&<Workspace key={page} page={page} user={user}/>}
         {error && (
           <p role="alert" className="panel" style={{ color: '#a35f55' }}>
             {error}
@@ -265,7 +265,7 @@ function App() {
           <div className="toolbar">
             <input aria-label="From date" type="date" onChange={e => filter('from', e.target.value)} />
             <input aria-label="To date" type="date" onChange={e => filter('to', e.target.value)} />
-            {page === 'Transactions' && (
+            {page === 'Transactions' && user?.role!=='Customer' && (
               <>
                 <input
                   placeholder="Search customer, invoice or note"
@@ -294,7 +294,7 @@ function App() {
           </div>
         )}
 
-        {!data && !error && <p>Loading your workspace…</p>}
+        {!data && !error && !modulePages.includes(page) && <p>Loading your workspace…</p>}
 
         {data && page === 'Dashboard' && (
           <>
@@ -431,7 +431,7 @@ function App() {
                     <td>{i.due_date}</td>
                     <td>{money(i.total)}</td>
                     <td>{money(i.amount_paid)}</td>
-                    <td>{badge(i.status)}</td>
+                    <td>{badge(i.status)}{user?.role!=='Customer'&&<div>{i.status==='Draft'&&<button onClick={()=>post('/invoices/'+i.id+'/confirm').then(load).catch(e=>setError(e.message))}>Confirm</button>}{!['Paid','Cancelled'].includes(i.status)&&i.amount_paid===0&&<button onClick={()=>post('/invoices/'+i.id+'/cancel').then(load).catch(e=>setError(e.message))}>Cancel</button>}</div>}</td>
                     <td>
                       <a href={'/pay/' + i.pay_token}>Pay now ↗</a> ·{' '}
                       <a href={'/api/invoices/' + i.pay_token + '/pdf'}>PDF</a>
