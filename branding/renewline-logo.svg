@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 300" role="img" aria-labelledby="t d">
+  <title id="t">Renewline logo</title><desc id="d">A continuous rising line passes three milestones and ends in a renewal arrow.</desc>
+  <g transform="translate(28 28)">
+    <rect width="244" height="244" rx="62" fill="#123342"/>
+    <path d="M47 170h44l29-43 29 20 46-69" fill="none" stroke="#FFC16D" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M164 77h32v32" fill="none" stroke="#FFC16D" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="91" cy="170" r="9" fill="#F5FCFA"/>
+    <circle cx="120" cy="127" r="9" fill="#F5FCFA"/>
+    <circle cx="149" cy="147" r="9" fill="#F5FCFA"/>
+  </g>
+  <text x="308" y="164" fill="#123342" font-family="Inter, Aptos, Arial, sans-serif" font-size="101" font-weight="750" letter-spacing="-5">Renewline</text>
+  <text x="314" y="210" fill="#6B8790" font-family="Inter, Aptos, Arial, sans-serif" font-size="23" font-weight="600" letter-spacing="3">KEEP REVENUE MOVING</text>
+</svg>

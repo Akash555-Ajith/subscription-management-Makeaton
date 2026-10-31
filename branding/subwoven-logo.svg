@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 300" role="img" aria-labelledby="t d">
+  <title id="t">Subwoven logo</title><desc id="d">Interwoven ribbons form an S, representing one connected subscription system.</desc>
+  <g transform="translate(28 28)">
+    <rect width="244" height="244" rx="62" fill="#261C4A"/>
+    <path d="M177 68H103c-26 0-42 15-42 37s16 34 42 34h38c26 0 42 13 42 35s-16 35-42 35H67" fill="none" stroke="#BBA8FF" stroke-width="23" stroke-linecap="round"/>
+    <path d="M67 176h74c26 0 42-15 42-37s-16-34-42-34h-38c-26 0-42-13-42-35" fill="none" stroke="#55DEC9" stroke-width="23" stroke-linecap="round"/>
+  </g>
+  <text x="308" y="164" fill="#261C4A" font-family="Inter, Aptos, Arial, sans-serif" font-size="101" font-weight="750" letter-spacing="-5">Subwoven</text>
+  <text x="314" y="210" fill="#786C98" font-family="Inter, Aptos, Arial, sans-serif" font-size="23" font-weight="600" letter-spacing="3">EVERY SUBSCRIPTION CONNECTED</text>
+</svg>
