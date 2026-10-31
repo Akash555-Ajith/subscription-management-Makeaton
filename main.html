@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brightloop Software | Unified Workspace</title>
+<style>
+:root {
+  --bg: #FAF6EE;
+  --card: #FFFDF8;
+  --border: #E8DFCF;
+  --text: #3B3226;
+  --muted: #7A6E5D;
+  --accent: #2F6F6B;
+  --accent-hover: #255757;
+  --green: #26734D;
+  --amber: #A66A16;
+  --red: #B33E37;
+  --grey: #77736D;
+  --shadow: 0 4px 18px rgba(59,50,38,.055);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+
+/* Auth Container */
+.auth-wrapper{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:min(440px,100%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:var(--shadow)}
+.wordmark{font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:24px}
+.wordmark span{color:var(--accent)}
+
+/* App Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:250px;background:var(--card);border-right:1px solid var(--border);padding:23px 14px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 10px 27px}
+.brand-icon{width:38px;height:38px;border-radius:12px;background:var(--accent);color:white;display:grid;place-items:center;font-size:21px;font-weight:800}
+.brand strong{font-size:17px;letter-spacing:-.5px}
+.brand small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.nav-label{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#A39988;padding:13px 12px 8px}
+.nav button{width:100%;border:0;background:none;text-align:left;padding:10px 12px;border-radius:9px;color:var(--muted);display:flex;gap:12px;align-items:center;margin:2px 0;font-size:13px}
+.nav button:hover,.nav button.active{background:#EAF2EF;color:var(--accent);font-weight:700}
+.nav .ico{width:19px;text-align:center;font-size:16px}
+.main{margin-left:250px;width:calc(100% - 250px);min-width:0}
+.topbar{height:72px;background:rgba(255,253,248,.94);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:10;gap:15px}
+.top-left{display:flex;align-items:center;gap:12px}
+.topbar h2{font-size:18px;margin:0}
+.topbar small{color:var(--muted)}
+.top-actions{display:flex;align-items:center;gap:12px}
+.role-badge{background:#EAF2EF;color:var(--accent);padding:6px 12px;border-radius:20px;font-weight:700;font-size:12px}
+.avatar{width:35px;height:35px;border-radius:50%;background:#DDE9E4;color:var(--accent);display:grid;place-items:center;font-weight:800}
+.hamburger{display:none;background:none;border:0;font-size:23px;color:var(--text)}
+.content{padding:28px 30px 50px;max-width:1600px;margin:auto}
+
+/* UI Elements */
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:23px;flex-wrap:wrap}
+.page-head h1{font-size:23px;margin:0 0 6px;letter-spacing:-.6px}
+.page-head p{color:var(--muted);margin:0;font-size:13px}
+.btn{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:9px 13px;color:var(--text);font-weight:650}
+.btn:hover{filter:brightness(.97)}
+.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn.danger{color:var(--red);border-color:#E9C5C0}
+.btn.small{padding:6px 9px;font-size:12px}
+.btn.block{width:100%;margin-top:10px}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px;margin-bottom:22px}
+.card,.panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.metric-label{font-size:12px;color:var(--muted);font-weight:600}
+.metric-value{font-size:25px;font-weight:800;letter-spacing:-1px;margin:12px 0 5px}
+.metric-foot{font-size:11px;color:var(--muted)}
+.metric-icon{float:right;background:#EAF2EF;color:var(--accent);width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px}
+.grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:17px;margin-bottom:18px}
+.panel{margin-bottom:18px}
+.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+.panel-title h3{font-size:14px;margin:0}
+.panel-title small{color:var(--muted)}
+.chart{height:215px;width:100%;position:relative}
+.chart canvas{width:100%;height:100%}
+.legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+.filters input,.filters select,.field input,.field select,.field textarea{border:1px solid var(--border);background:#fffefa;border-radius:8px;padding:10px 11px;color:var(--text);min-width:0}
+.filters input{flex:1;min-width:160px}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th{text-align:left;font-size:10px;letter-spacing:.65px;color:var(--muted);padding:12px 10px;border-bottom:1px solid var(--border);font-weight:800}
+td{padding:13px 10px;border-bottom:1px solid #F0EADF;font-size:12px}
+tbody tr:hover{background:#FCF9F2}
+.status{display:inline-block;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:800}
+.Active,.Paid{background:#E4F2E8;color:var(--green)}
+.Pending,.Quotation,.Confirmed{background:#FFF0D7;color:var(--amber)}
+.Overdue,.Failed,.Cancelled{background:#FCE7E4;color:var(--red)}
+.Draft,.Closed,.Disabled{background:#EFEEEA;color:var(--grey)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.field label{font-size:12px;color:var(--muted);font-weight:700}
+.field.full{grid-column:1/-1}
+.field textarea{min-height:75px}
+.modal-backdrop{position:fixed;inset:0;background:#211b1590;display:none;place-items:center;z-index:50;padding:15px}
+.modal{width:min(540px,100%);max-height:90vh;overflow:auto;background:var(--card);border-radius:15px;padding:23px;box-shadow:0 20px 60px #0003}
+.modal h2{font-size:18px;margin:0 0 18px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.toast{position:fixed;bottom:22px;right:22px;background:#263F39;color:white;padding:13px 19px;border-radius:10px;z-index:100;display:none;box-shadow:var(--shadow)}
+.empty{padding:35px;text-align:center;color:var(--muted)}
+.rules-box h3{color:var(--accent);margin-top:16px}
+.rules-box ul{padding-left:20px;color:var(--text);line-height:1.6}
+.hidden{display:none!important}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:700px){
+ .sidebar{transform:translateX(-100%);transition:.25s;width:260px}
+ .sidebar.open{transform:translateX(0)}
+ .main{margin-left:0;width:100%}
+ .hamburger{display:block}
+ .topbar{padding:0 15px;height:65px}
+ .content{padding:20px 14px}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-wrapper">
+ <div class="auth-card">
+  <div class="wordmark">Bright<span>loop</span> Software</div>
+  <h2 style="margin-top:0;font-size:1.2rem">Sign in to your workspace</h2>
+  <p style="color:var(--muted);font-size:0.9rem;margin-bottom:20px">Select your role or sign in with your credentials.</p>
+  <form id="loginForm" onsubmit="handleLogin(event)">
+   <div class="field">
+    <label>Select Role / Portal</label>
+    <select id="loginRole">
+     <option value="Admin">Administrator</option>
+     <option value="Staff">Staff Workspace</option>
+     <option value="Customer">Customer Portal</option>
+    </select>
+   </div>
+   <div class="field">
+    <label>Email Address</label>
+    <input type="email" id="loginEmail" value="admin@brightloop.com" required>
+   </div>
+   <div class="field">
+    <label>Password</label>
+    <input type="password" id="loginPassword" value="password123" required>
+   </div>
+   <button type="submit" class="btn primary block">Sign In & Redirect</button>
+  </form>
+  <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--muted)">
+   Demo credentials: Use any email. Role selection dictates your dashboard view.
+  </div>
+ </div>
+</div>
+
+<!-- MAIN APP CONTAINER -->
+<div id="appContainer" class="app hidden">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand">
+   <div class="brand-icon">B</div>
+   <div><strong>brightloop</strong><small id="brandSubtitle">Subscription Management</small></div>
+  </div>
+  <nav class="nav" id="navigation">
+   <div class="nav-label">WORKSPACE</div>
+  </nav>
+  <div style="padding: 15px 10px; margin-top: auto;">
+   <button class="btn danger small block" onclick="logout()">Sign Out</button>
+  </div>
+ </aside>
+ 
+ <div class="mobile-shade" id="shade" onclick="toggleMenu()"></div>
+ 
+ <main class="main">
+  <header class="topbar">
+   <div class="top-left">
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+    <div><h2 id="topTitle">Dashboard</h2><small>Brightloop Software / Portal</small></div>
+   </div>
+   <div class="top-actions">
+    <span class="role-badge" id="currentRoleBadge">Admin</span>
+    <div class="avatar" id="userAvatar">A</div>
+   </div>
+  </header>
+  <section class="content" id="content"></section>
+ </main>
+</div>
+
+<!-- MODAL & TOAST -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+ <div class="modal">
+  <h2 id="modalTitle">Create record</h2>
+  <div id="modalBody"></div>
+  <div class="modal-actions">
+   <button class="btn" onclick="closeModal()">Cancel</button>
+   <button class="btn primary" id="saveBtn" onclick="saveRecord()">Save</button>
+  </div>
+ </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ================= GLOBAL STATE & DATA ================= */
+let currentUser = null; // { name, email, role }
+let current = 'Dashboard';
+let modalType = '';
+let search = '';
+let selectedEdit = null;
+
+const names = ['Acme Technologies','Nova Systems','Pixel Works','Greenfield Labs','Orbit Solutions','Vertex Digital','Bluewave Media','Quantum Labs','Skyline Tech','Apex Innovations','Zenith Software','CoreLogic','Bright Minds','NextGen IT','Fusion Systems','Prime Digital','CloudNine','TechNova','Alpha Networks','FutureStack'];
+
+const products = [
+ {name:'Odoo ERP',type:'Software',price:12000,cost:7000,variants:[['Brand','Odoo',560],['Edition','Enterprise',2000]]},
+ {name:'Cloud Storage',type:'Service',price:2500,cost:900,variants:[['Storage','1 TB',500],['Storage','5 TB',2000]]},
+ {name:'CRM Suite',type:'Software',price:8000,cost:4500,variants:[['Edition','Pro',1000]]},
+ {name:'Security Pack',type:'Service',price:4500,cost:2100,variants:[['Level','Advanced',800]]}
+];
+
+const plans = [
+ {name:'Starter Monthly',price:999,period:'Monthly',min:1,status:'Available',pause:true,renew:true},
+ {name:'Professional Monthly',price:2499,period:'Monthly',min:1,status:'Available',pause:true,renew:true},
+ {name:'Business Yearly',price:24000,period:'Yearly',min:1,status:'Available',pause:false,renew:true},
+ {name:'Enterprise Yearly',price:48000,period:'Yearly',min:5,status:'Available',pause:true,renew:true}
+];
+
+let subscriptions = Array.from({length:30},(_,i)=>({
+ id:'SUB-'+String(1001+i), customer:names[i%20], plan:plans[i%4].name,
+ start:'2026-08-'+String(i%28+1).padStart(2,'0'),
+ expiry:'2026-11-'+String(i%28+1).padStart(2,'0'),
+ terms:'Net 15', amount:plans[i%4].price,
+ status:['Active','Active','Confirmed','Quotation','Draft','Closed'][i%6]
+}));
+
+let invoices = Array.from({length:40},(_,i)=>({
+ id:'INV-'+String(2001+i), customer:names[i%20],
+ date:'2026-10-'+String(i%28+1).padStart(2,'0'),
+ due:'2026-10-'+String(i%28+1).padStart(2,'0'),
+ amount:1000+((i*137)%18000), paid: i%10===0?1000:0,
+ status:i%10<6?'Paid':i%10<8?'Confirmed':'Overdue',
+ subscription:'SUB-'+(1001+i%30), period:'2026-'+String(i%12+1).padStart(2,'0')
+}));
+
+let payments = Array.from({length:25},(_,i)=>({
+ id:'PAY-'+(3001+i), date:'2026-10-'+String(i%28+1).padStart(2,'0'),
+ invoice:'INV-'+(2001+i%40), customer:names[i%20],
+ method:['Razorpay','Bank Transfer','UPI','Cash','Card'][i%5],
+ amount:1000+((i*137)%18000), status:'Paid'
+}));
+
+let customers = names.map((name,i)=>({name,email:name.toLowerCase().replaceAll(' ','')+'@example.com',phone:'+91 98'+String(10000000+i).slice(0,8),id:'CUS-'+(101+i)}));
+let staff = [{name:'Arun Kumar',email:'arun@brightloop.com',phone:'+91 9876543210',empid:'EMP001',status:'Active'}];
+let taxes = [{name:'GST',rate:18,applies:'All products'}];
+let discounts = [{name:'Welcome 10%',type:'Percentage',value:10,limit:100,used:42,status:'Active'}];
+let templates = [{name:'Starter Quotation',validity:15,plan:'Starter Monthly',product:'Odoo ERP',qty:1}];
+let audit = [];
+
+/* ================= AUTHENTICATION & REDIRECTION ================= */
+function handleLogin(e) {
+ e.preventDefault();
+ const role = document.getElementById('loginRole').value;
+ const email = document.getElementById('loginEmail').value;
+ const name = email.split('@')[0].toUpperCase();
+ 
+ currentUser = { name, email, role };
+ 
+ // Hide auth, show app
+ document.getElementById('authScreen').classList.add('hidden');
+ document.getElementById('appContainer').classList.remove('hidden');
+ 
+ // Apply role-based landing & menu navigation
+ document.getElementById('currentRoleBadge').textContent = role;
+ document.getElementById('userAvatar').textContent = name.charAt(0);
+ 
+ if (role === 'Admin') {
+  current = 'Dashboard';
+ } else if (role === 'Staff') {
+  current = 'My Work';
+ } else {
+  current = 'Portal Overview';
+ }
+ 
+ notify('Welcome back, ' + name + ' (' + role + ')');
+ render();
+}
+
+function logout() {
+ currentUser = null;
+ document.getElementById('authScreen').classList.remove('hidden');
+ document.getElementById('appContainer').classList.add('hidden');
+ notify('Signed out successfully');
+}
+
+/* ================= NAVIGATION & ROUTING ================= */
+function getSectionsForRole() {
+ const r = currentUser ? currentUser.role : 'Customer';
+ if (r === 'Admin') {
+  return [
+   ['Dashboard','◫'],['Products','▦'],['Plans','◷'],['Quotation Templates','▤'],
+   ['Subscriptions','↻'],['Invoices','▣'],['Payments','₹'],['Taxes','%'],
+   ['Discounts','◇'],['Customers','♙'],['Staff','♧'],['Reports','▥'],['Rules & Regulations','⚖'],['Settings','⚙']
+  ];
+ } else if (r === 'Staff') {
+  return [
+   ['My Work','◫'],['Customers','♙'],['Subscriptions','↻'],['Quotations','▤'],
+   ['Invoices','▣'],['Payments','₹'],['Overdue','!'],['Rules & Regulations','⚖'],['Reports','▥']
+  ];
+ } else {
+  return [
+   ['Portal Overview','◫'],['My Subscriptions','↻'],['My Invoices','▣'],['My Payments','₹'],['Rules & Regulations','⚖']
+  ];
+ }
+}
+
+function toggleMenu(){
+ document.getElementById('sidebar').classList.toggle('open');
+ document.getElementById('shade').classList.toggle('show');
+}
+
+function money(n){return '₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function status(s){return `<span class="status ${s}">${s}</span>`}
+function notify(s){let t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
+
+function nav(){
+ let navEl = document.getElementById('navigation');
+ let sections = getSectionsForRole();
+ navEl.innerHTML = '<div class="nav-label">' + currentUser.role.toUpperCase() + ' PORTAL</div>' + 
+  sections.map(([n,i])=>`<button class="${current===n?'active':''}" onclick="go('${n}')"><span class="ico">${i}</span>${n}</button>`).join('');
+}
+
+function go(n){
+ current = n; search = ''; nav(); render();
+ document.getElementById('topTitle').textContent = n;
+ document.getElementById('sidebar').classList.remove('open');
+ document.getElementById('shade').classList.remove('show');
+}
+
+function header(title,sub,action=''){
+ return `<div class="page-head"><div><h1>${title}</h1><p>${sub}</p></div>${action}</div>`;
+}
+
+function button(label,fn='openCreate()',cls='primary'){return `<button class="btn ${cls}" onclick="${fn}">${label}</button>`}
+function metric(label,value,foot,ico){return `<div class="card"><span class="metric-icon">${ico}</span><div class="metric-label">${label}</div><div class="metric-value">${value}</div><div class="metric-foot">${foot}</div></div>`}
+function table(headers,rows){return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows||'<tr><td colspan="10"><div class="empty">No records found</div></td></tr>'}</tbody></table></div>`}
+
+/* ================= RENDER LOGIC BY ROLE ================= */
+function render(){
+ nav();
+ let c = document.getElementById('content');
+ 
+ if (currentUser.role === 'Admin') {
+  renderAdminScreens(c);
+ } else if (currentUser.role === 'Staff') {
+  renderStaffScreens(c);
+ } else {
+  renderCustomerScreens(c);
+ }
+}
+
+/* --- ADMIN SCREENS --- */
+function renderAdminScreens(c) {
+ if(current==='Dashboard'){
+  let active=subscriptions.filter(x=>x.status==='Active').length;
+  let mrr=subscriptions.filter(x=>x.status==='Active').reduce((a,b)=>a+b.amount,0);
+  let paid=invoices.filter(x=>x.status==='Paid').reduce((a,b)=>a+b.amount,0);
+  let outstanding=invoices.filter(x=>x.status!=='Paid').reduce((a,b)=>a+b.amount,0);
+  c.innerHTML = header('Finance Overview','Welcome back. System overview for Brightloop Software.') +
+   `<div class="cards">
+    ${metric('Active subscriptions',active,'Across all customers','↻')}
+    ${metric('Monthly recurring revenue',money(mrr),'Active plan value','₹')}
+    ${metric('Revenue collected',money(paid),'Paid invoices','↗')}
+    ${metric('Outstanding amount',money(outstanding),'Unpaid invoices','◷')}
+   </div>
+   <div class="panel"><h3>Quick Admin Operations</h3><p>Use the sidebar navigation to manage products, pricing plans, subscriptions, taxes, discounts, staff accounts, and compliance rules.</p></div>`;
+  return;
+ }
+ 
+ if(current==='Rules & Regulations') {
+  c.innerHTML = renderRulesPage();
+  return;
+ }
+ 
+ // Standard Generic Admin Pages
+ if(current==='Products') c.innerHTML = genericPage(current,'Manage product catalogue and pricing.', products.map((x,i)=>`<tr><td><b>${x.name}</b></td><td>${x.type}</td><td>${money(x.price)}</td><td>${money(x.cost)}</td><td>${x.variants.length}</td></tr>`).join(''), ['Product','Type','Sales price','Cost price','Variants']);
+ else if(current==='Plans') c.innerHTML = genericPage(current,'Manage subscription billing.', plans.map((x,i)=>`<tr><td><b>${x.name}</b></td><td>${money(x.price)}</td><td>${x.period}</td><td>${status(x.status)}</td></tr>`).join(''), ['Plan','Price','Period','Status']);
+ else if(current==='Subscriptions') c.innerHTML = genericPage(current,'Track subscriptions.', subscriptions.map(x=>`<tr><td>${x.id}</td><td>${x.customer}</td><td>${x.plan}</td><td>${money(x.amount)}</td><td>${status(x.status)}</td></tr>`).join(''), ['Number','Customer','Plan','Amount','Status']);
+ else if(current==='Invoices') c.innerHTML = genericPage(current,'Manage billing and invoices.', invoices.map(x=>`<tr><td>${x.id}</td><td>${x.customer}</td><td>${x.due}</td><td>${money(x.amount)}</td><td>${status(x.status)}</td></tr>`).join(''), ['Invoice','Customer','Due Date','Amount','Status']);
+ else if(current==='Payments') c.innerHTML = genericPage(current,'Payment history.', payments.map(x=>`<tr><td>${x.date}</td><td>${x.invoice}</td><td>${x.customer}</td><td>${x.method}</td><td>${money(x.amount)}</td><td>${status(x.status)}</td></tr>`).join(''), ['Date','Invoice','Customer','Method','Amount','Status']);
+ else if(current==='Customers') c.innerHTML = genericPage(current,'Customer directories.', customers.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.email}</td><td>${x.phone}</td></tr>`).join(''), ['Customer','Email','Phone']);
+ else if(current==='Staff') c.innerHTML = genericPage(current,'Staff roster.', staff.map(x=>`<tr><td>${x.name}</td><td>${x.email}</td><td>${x.empid}</td><td>${status(x.status)}</td></tr>`).join(''), ['Name','Email','Employee ID','Status']);
+ else c.innerHTML = header(current,'Administration module.') + '<div class="panel">Module loaded successfully.</div>';
+}
+
+/* --- STAFF SCREENS --- */
+function renderStaffScreens(c) {
+ if(current==='My Work') {
+  c.innerHTML = header('Staff Workspace','Your daily task board and collection priorities.') +
+   `<div class="cards">
+    ${metric('Pending Invoices', invoices.filter(x=>x.status==='Confirmed').length, 'Action required', '✉')}
+    ${metric('Overdue Accounts', invoices.filter(x=>x.status==='Overdue').length, 'Follow up needed', '!')}
+   </div>
+   <div class="panel"><h3>Staff Tasks</h3><p>Review customer accounts, log offline payments, and track overdue subscriptions.</p></div>`;
+  return;
+ }
+ if(current==='Rules & Regulations') {
+  c.innerHTML = renderRulesPage();
+  return;
+ }
+ if(current==='Invoices') c.innerHTML = genericPage(current,'Client billing & collection status.', invoices.map(x=>`<tr><td>${x.id}</td><td>${x.customer}</td><td>${money(x.amount)}</td><td>${status(x.status)}</td></tr>`).join(''), ['Invoice','Customer','Amount','Status']);
+ else c.innerHTML = header(current,'Staff Operations') + '<div class="panel">Staff view operational records.</div>';
+}
+
+/* --- CUSTOMER SCREENS --- */
+function renderCustomerScreens(c) {
+ let myName = currentUser.name;
+ if(current==='Portal Overview') {
+  let mySubs = subscriptions.filter(s=>s.customer.toUpperCase().includes(myName.substring(0,4)) || s.customer === 'Acme Technologies');
+  let myInvs = invoices.filter(i=>i.customer.toUpperCase().includes(myName.substring(0,4)) || i.customer === 'Acme Technologies');
+  c.innerHTML = header('Welcome, ' + currentUser.name,'Your Brightloop Customer Portal.') +
+   `<div class="cards">
+    ${metric('Active Subscriptions', mySubs.length, 'Current plans', '↻')}
+    ${metric('Unpaid Invoices', myInvs.filter(i=>i.status!=='Paid').length, 'Due balance', '◷')}
+   </div>
+   <div class="panel"><h3>Quick Actions</h3><button class="btn primary" onclick="go('My Invoices')">View My Invoices</button></div>`;
+  return;
+ }
+ if(current==='Rules & Regulations') {
+  c.innerHTML = renderRulesPage();
+  return;
+ }
+ if(current==='My Subscriptions') {
+  c.innerHTML = genericPage(current,'Your active software subscriptions and licenses.', subscriptions.slice(0,3).map(x=>`<tr><td>${x.id}</td><td>${x.plan}</td><td>${x.start}</td><td>${x.expiry}</td><td>${status(x.status)}</td></tr>`).join(''), ['Subscription ID','Plan','Start Date','Expiry','Status'], false);
+  return;
+ }
+ if(current==='My Invoices') {
+  c.innerHTML = genericPage(current,'Invoices billed to your account.', invoices.slice(0,3).map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${money(x.amount)}</td><td>${status(x.status)}</td></tr>`).join(''), ['Invoice ID','Date','Amount','Status'], false);
+  return;
+ }
+ c.innerHTML = header(current,'Customer Portal') + '<div class="panel">Portal data synchronized.</div>';
+}
+
+/* --- RULES & REGULATIONS COMPLIANCE PAGE --- */
+function renderRulesPage() {
+ return header('Rules & Regulations', 'Official Brightloop Software Governance & Compliance Policies.') +
+  `<div class="panel rules-box">
+   <h3>1. Subscription & Billing Governance</h3>
+   <ul>
+    <li>All recurring software subscriptions (Monthly/Yearly) automatically renew unless cancelled 7 days prior to the billing cycle date.</li>
+    <li>Payments must be settled within Net-15 terms. Accounts exceeding 30 days overdue are subject to temporary service suspension.</li>
+    <li>Refund requests for enterprise packages must be filed within 14 business days of initial procurement.</li>
+   </ul>
+   
+   <h3>2. User Account Security & Access Protocols</h3>
+   <ul>
+    <li>Administrators and staff must enforce multi-factor authentication and adhere to strict password complexity standards (>8 characters, uppercase, lowercase, special symbols).</li>
+    <li>Sharing credentials across corporate boundaries is strictly prohibited and will result in immediate account revocation.</li>
+   </ul>
+   
+   <h3>3. Data Privacy & Compliance</h3>
+   <ul>
+    <li>Brightloop Software complies with standard data protection guidelines, ensuring user PII and financial records remain encrypted at rest and in transit.</li>
+    <li>Audit logs track all administrative overrides, invoice modifications, and permission updates for complete accountability.</li>
+   </ul>
+  </div>`;
+}
+
+function genericPage(title,desc,rows,headers,canCreate=false){
+ return header(title,desc) + `<div class="panel"><div id="dataTable">${table(headers,rows)}</div></div>`;
+}
+
+function closeModal(){document.getElementById('modal').style.display='none'}
+function saveRecord(){closeModal();notify('Record updated successfully')}
+
+// Initial state
+</script>
+</body>
+</html>
