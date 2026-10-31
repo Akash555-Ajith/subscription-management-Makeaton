@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brightloop Software | Unified Workspace</title>
+<style>
+:root{--bg:#FAF6EE;--card:#FFFDF8;--border:#E8DFCF;--text:#3B3226;--muted:#7A6E5D;--accent:#2F6F6B;--accent-hover:#255757;--on:#fff;--soft:#EAF2EF;--input:#fffefa;--green:#26734D;--amber:#A66A16;--red:#B33E37;--grey:#77736D;--shadow:0 4px 18px rgba(59,50,38,.055);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#17140F;--card:#201C16;--border:#3A3328;--text:#EDE6D8;--muted:#A89D8A;--accent:#5BB5AE;--accent-hover:#7CC8C2;--on:#0F1F1E;--soft:#1F3331;--input:#2A251D;--green:#6CCB9A;--amber:#E0A14A;--red:#EF7F77;--grey:#A9A59E;--shadow:none;color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
+.auth-wrapper{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:min(440px,100%);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:var(--shadow)}
+.wordmark{font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:20px}.wordmark span{color:var(--accent)}
+.tabs{display:flex;background:var(--soft);border-radius:10px;padding:4px;margin-bottom:20px}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:8px;font-weight:650;color:var(--muted)}
+.tabs button.on{background:var(--card);color:var(--accent);box-shadow:var(--shadow)}
+.err{color:var(--red);font-size:12px;min-height:16px;margin:4px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:12px;color:var(--muted);align-items:center}
+.app{display:flex;min-height:100vh}
+.sidebar{width:250px;background:var(--card);border-right:1px solid var(--border);padding:23px 14px;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 10px 22px}
+.brand-icon{width:38px;height:38px;border-radius:12px;background:var(--accent);color:var(--on);display:grid;place-items:center;font-size:21px;font-weight:800}
+.brand strong{font-size:17px}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.nav-label{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--muted);padding:13px 12px 8px}
+.nav button{width:100%;border:0;background:none;text-align:left;padding:10px 12px;border-radius:9px;color:var(--muted);display:flex;gap:12px;align-items:center;margin:2px 0;font-size:13px}
+.nav button:hover,.nav button.active{background:var(--soft);color:var(--accent);font-weight:700}
+.ico{width:19px;text-align:center;font-size:16px}
+.mobile-shade{display:none;position:fixed;inset:0;background:#0007;z-index:15}.mobile-shade.show{display:block}
+.main{margin-left:250px;width:calc(100% - 250px);min-width:0}
+.topbar{min-height:68px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;gap:15px}
+.top-left,.top-actions{display:flex;align-items:center;gap:12px}
+.topbar h2{font-size:18px;margin:0}.topbar small{color:var(--muted)}
+.role-badge{background:var(--soft);color:var(--accent);padding:6px 12px;border-radius:20px;font-weight:700;font-size:12px}
+.avatar{width:35px;height:35px;border-radius:50%;background:var(--soft);color:var(--accent);display:grid;place-items:center;font-weight:800}
+.hamburger{display:none;background:none;border:0;font-size:23px}
+.content{padding:28px 30px 50px;max-width:1600px;margin:auto}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px;flex-wrap:wrap}
+.page-head h1{font-size:23px;margin:0 0 6px}.page-head p{color:var(--muted);margin:0;font-size:13px}
+.btn{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:9px 13px;font-weight:650}
+.btn:hover{filter:brightness(.96)}
+.btn.primary{background:var(--accent);color:var(--on);border-color:var(--accent)}
+.btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.btn.small{padding:5px 9px;font-size:12px}.btn.block{width:100%;margin-top:10px}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.card,.panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.panel{margin-bottom:18px}.panel h3{margin:0 0 14px;font-size:14px}
+.metric-label{font-size:12px;color:var(--muted);font-weight:600}
+.metric-value{font-size:23px;font-weight:800;margin:12px 0 5px}.metric-foot{font-size:11px;color:var(--muted)}
+.metric-icon{float:right;background:var(--soft);color:var(--accent);width:32px;height:32px;border-radius:9px;display:grid;place-items:center}
+.grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:17px}
+.bars{display:flex;gap:10px;height:210px}
+.bar{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--muted);gap:4px}
+.bar .col{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.bar i{width:100%;max-width:48px;background:var(--accent);border-radius:6px 6px 0 0;min-height:2px}
+.bar span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.filters input{flex:1;min-width:160px}
+input,select{border:1px solid var(--border);background:var(--input);border-radius:8px;padding:10px 11px;min-width:0}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th{text-align:left;font-size:10px;letter-spacing:.65px;text-transform:uppercase;color:var(--muted);padding:12px 10px;border-bottom:1px solid var(--border)}
+td{padding:12px 10px;border-bottom:1px solid var(--border);font-size:12px}
+td:first-child{font-weight:650}td.act{text-align:right;display:flex;gap:6px;justify-content:flex-end}
+tbody tr:hover{background:var(--soft)}
+.status{display:inline-block;border-radius:20px;padding:4px 9px;font-size:10px;font-weight:800;background:color-mix(in srgb,var(--grey) 18%,transparent);color:var(--grey)}
+.Active,.Paid,.Available{background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--green)}
+.Pending,.Quotation,.Confirmed{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.Overdue,.Failed,.Cancelled{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.field label{font-size:12px;color:var(--muted);font-weight:700}
+.hint{font-size:11px;color:var(--muted);margin:-4px 0 10px}
+.modal-backdrop{position:fixed;inset:0;background:#211b1590;display:none;place-items:center;z-index:50;padding:15px}
+.modal{width:min(540px,100%);max-height:90vh;overflow:auto;background:var(--card);border-radius:15px;padding:23px}
+.modal h2{font-size:18px;margin:0 0 16px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}
+.toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom,0px));right:22px;background:#263F39;color:#fff;padding:13px 19px;border-radius:10px;z-index:100;display:none}
+.empty{padding:35px;text-align:center;color:var(--muted);white-space:normal}
+.rules-box h3{color:var(--accent);margin-top:16px}.rules-box ul{padding-left:20px;line-height:1.6}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{transform:translateX(-100%);transition:.25s;width:260px}.sidebar.open{transform:none}
+.main{margin-left:0;width:100%}.hamburger{display:block}.topbar{padding:0 15px}.content{padding:20px 14px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.form-grid{grid-template-columns:1fr}.auth-card{padding:24px}}
+
+/* ---- cream paper auth ---- */
+.auth-wrapper{--card:#FFFBF1;--border:#E4D8BF;--text:#3B3226;--muted:#7A6E5D;--accent:#2F6F6B;--accent-hover:#255757;--on:#fff;--soft:#F3EAD6;--input:#FFFEF9;--red:#B33E37;--shadow:0 18px 50px rgba(92,72,38,.14),0 2px 6px rgba(92,72,38,.08);color:var(--text);color-scheme:light;padding:24px 16px;align-items:start;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .34 0 0 0 0 .22 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),radial-gradient(circle at 20% 10%,#FFFDF6 0,#F7EFDC 60%,#EFE4CB 100%)}
+.auth-card{width:min(480px,100%);margin:auto;border-radius:18px;padding:34px;border:1px solid var(--border);
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .25 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),linear-gradient(160deg,#FFFEF9,#FBF4E3);box-shadow:var(--shadow)}
+.auth-card h2{margin:0 0 4px;font-size:1.15rem}.auth-card .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+.seg{display:flex;gap:6px;margin-bottom:16px}.seg button{flex:1;border:1px solid var(--border);background:var(--input);border-radius:9px;padding:9px 4px;font-weight:650;color:var(--muted)}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.auth-card textarea{border:1px solid var(--border);background:var(--input);border-radius:8px;padding:10px 11px;min-height:70px;resize:vertical;font:inherit;color:inherit}
+.auth-card .btn:not(.primary){background:var(--input)}
+.auth-card .chk{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin:2px 0 8px}.auth-card .chk input{padding:0}
+.ok{color:var(--green);font-size:12px;margin:4px 0}
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth-wrapper"><div class="auth-card">
+ <div class="wordmark">Bright<span>loop</span> Software</div>
+ <div class="tabs"><button id="tabIn" class="on" onclick="authTab('in')">Login</button><button id="tabUp" onclick="authTab('up')">New user</button></div>
+ <form id="inForm" onsubmit="doLogin(event)" novalidate>
+  <h2>Welcome back</h2><p class="sub">Sign in with your username and password.</p>
+  <div class="field"><label for="inEmail">Username (email or Employee ID)</label><input id="inEmail" autocomplete="username"></div>
+  <div class="field"><label for="inPw">Password</label><input id="inPw" type="password" autocomplete="current-password"></div>
+  <label class="chk"><input type="checkbox" onchange="$('inPw').type=this.checked?'text':'password'"> Show password</label>
+  <div class="err" id="inErr" role="alert"></div>
+  <button class="btn primary block" type="submit">Login</button>
+  <div class="chips">Demo:
+   <button type="button" class="btn small" onclick="fill('admin@brightloop.com','Admin@123')">Admin</button>
+   <button type="button" class="btn small" onclick="fill('EMP001','Staff@123')">Employee</button>
+   <button type="button" class="btn small" onclick="fill('customer@acme.com','Customer@123')">Client</button></div>
+ </form>
+ <form id="upForm" class="hidden" onsubmit="doSignup(event)" novalidate>
+  <h2>Create your account</h2><p class="sub">Choose your account type, then fill in your details.</p>
+  <div class="seg" id="roleSeg" role="group" aria-label="Account type"><button type="button" data-k="Customer" class="on" onclick="setRole('Customer')">Client</button><button type="button" data-k="Employee" onclick="setRole('Employee')">Employee</button><button type="button" data-k="Admin" onclick="setRole('Admin')">Admin</button></div>
+  <div class="field"><label for="upName">Name</label><input id="upName" autocomplete="name"></div>
+  <div class="field"><label for="upEmail">Email</label><input id="upEmail" type="email" autocomplete="email"></div>
+  <div class="field"><label for="upPhone">Phone</label><input id="upPhone" type="tel" inputmode="numeric" placeholder="10-digit mobile number" autocomplete="tel"></div>
+  <div class="field" data-r="Employee"><label for="upEmp">Employee ID</label><input id="upEmp" placeholder="e.g. EMP002"></div>
+  <div class="field" data-r="Customer"><label for="upCo">Company (optional)</label><input id="upCo" autocomplete="organization"></div>
+  <div class="field" data-r="Customer Admin"><label for="upAddr">Address</label><textarea id="upAddr" autocomplete="street-address"></textarea>
+   <button type="button" class="btn small" style="align-self:flex-start" onclick="locate()">📍 Use my location</button><span class="ok" id="upLoc"></span></div>
+  <div class="field hidden" data-r="Admin"><label for="upGpay">GPay ID (UPI)</label><input id="upGpay" placeholder="name@okbank"></div>
+  <div class="field hidden" data-r="Admin"><label for="upAad">Aadhaar number</label><input id="upAad" inputmode="numeric" maxlength="14" placeholder="12 digits" autocomplete="off"></div>
+  <div class="field"><label for="upPw">Password</label><input id="upPw" type="password" autocomplete="new-password"></div>
+  <div class="hint">Minimum 8 characters, with A–Z, a–z and 0–9.</div>
+  <div class="field"><label for="upPw2">Confirm password</label><input id="upPw2" type="password" autocomplete="new-password"></div>
+  <div class="err" id="upErr" role="alert"></div>
+  <button class="btn primary block" type="submit">Create account</button>
+ </form>
+</div></div>
+
+<div id="appContainer" class="app hidden">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-icon">B</div><div><strong>brightloop</strong><small>Subscription Management</small></div></div>
+  <nav class="nav" id="navigation" aria-label="Main"></nav>
+  <div style="margin-top:auto;padding:15px 10px"><button class="btn danger small block" onclick="logout()">Sign out</button></div>
+ </aside>
+ <div class="mobile-shade" id="shade" onclick="toggleMenu()"></div>
+ <main class="main">
+  <header class="topbar">
+   <div class="top-left"><button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+    <div><h2 id="topTitle">Dashboard</h2><small>Brightloop Software</small></div></div>
+   <div class="top-actions"><span class="role-badge" id="roleBadge"></span><div class="avatar" id="userAvatar"></div></div>
+  </header>
+  <section class="content" id="content"></section>
+ </main>
+</div>
+
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+ <div class="modal"><h2 id="modalTitle"></h2><div id="modalBody"></div>
+  <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveRecord()">Save</button></div></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const TODAY='2026-10-31',KEY='bl_v2',$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+const add=(d,n)=>new Date(+new Date(d)+n*864e5).toISOString().slice(0,10);
+const names=['Acme Technologies','Nova Systems','Pixel Works','Greenfield Labs','Orbit Solutions','Vertex Digital','Bluewave Media','Quantum Labs','Skyline Tech','Apex Innovations','Zenith Software','CoreLogic','Bright Minds','NextGen IT','Fusion Systems','Prime Digital'];
+let db,currentUser=null,current='',search='',sf='',view=null,modal={},tt;
+
+/* ---------- data ---------- */
+function seed(){
+ const D={products:[['Odoo ERP','Software',12000,7000],['Cloud Storage','Service',2500,900],['CRM Suite','Software',8000,4500],['Security Pack','Service',4500,2100]].map((p,i)=>({id:'PRD-'+(1+i),name:p[0],type:p[1],price:p[2],cost:p[3]})),
+ plans:[['Starter Monthly',999,'Monthly',1],['Professional Monthly',2499,'Monthly',1],['Business Yearly',24000,'Yearly',1],['Enterprise Yearly',48000,'Yearly',5]].map((p,i)=>({id:'PLN-'+(1+i),name:p[0],price:p[1],period:p[2],min:p[3],status:'Available'})),
+ taxes:[{id:'TAX-1',name:'GST',rate:18,applies:'All products'}],
+ discounts:[{id:'DSC-1',name:'Welcome 10%',type:'Percentage',value:10,limit:100,used:42,status:'Active'}],
+ staff:[{id:'EMP001',name:'Arun Kumar',email:'staff@brightloop.com',phone:'+91 9876543210',status:'Active'}],
+ users:[{name:'Admin',email:'admin@brightloop.com',pw:'Admin@123',role:'Admin'},{name:'Arun Kumar',email:'staff@brightloop.com',pw:'Staff@123',role:'Staff'},{name:'Acme User',email:'customer@acme.com',pw:'Customer@123',role:'Customer',company:'Acme Technologies'}],
+ payments:[],invoices:[],audit:[]};
+ D.customers=names.map((n,i)=>({id:'CUS-'+(101+i),name:n,email:n.toLowerCase().replace(/ /g,'')+'@example.com',phone:'+91 98'+String(10000000+i)}));
+ D.subscriptions=names.map((c,i)=>{const p=D.plans[i%4],s=add('2026-08-01',i*4);return{id:'SUB-'+(1001+i),customer:c,plan:p.name,start:s,expiry:add(s,p.period==='Yearly'?365:120),terms:'Net 15',amount:p.price,status:['Active','Active','Active','Confirmed','Quotation','Draft','Closed'][i%7]}});
+ D.subscriptions.forEach((s,i)=>{if(['Quotation','Draft'].includes(s.status))return;
+  const amt=Math.round(s.amount*1.18),paid=i%3===0?0:i%5===0?Math.round(amt/2):amt,id='INV-'+(2001+i);
+  D.invoices.push({id,customer:s.customer,subscription:s.id,date:s.start,due:add(s.start,15),amount:amt,paid,status:''});
+  if(paid)D.payments.push({id:'PAY-'+(3001+i),date:add(s.start,3+i%9),invoice:id,customer:s.customer,method:['Razorpay','Bank Transfer','UPI','Cash','Card'][i%5],amount:paid,status:'Paid'})});
+ return D}
+const sync=()=>db.invoices.forEach(i=>i.status=i.paid>=i.amount?'Paid':i.due<TODAY?'Overdue':'Pending');
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function load(){try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!db)db=seed();sync()}
+const uid=p=>p+'-'+Date.now().toString(36)+Math.floor(Math.random()*99);
+const log=a=>{db.audit.unshift({t:new Date().toLocaleString('en-IN'),u:currentUser.email,a});db.audit.length=Math.min(db.audit.length,50)};
+const planOf=s=>db.plans.find(p=>p.name===s.plan)||{};
+const cNames=()=>db.customers.map(c=>c.name),pNames=()=>db.plans.map(p=>p.name);
+
+/* entity config: cols [key,label,kind(m money,s status,p percent)], f [key,label,type(n,d,e,s),options,optional] */
+const E={
+ products:{t:'Products',s:'product',d:'Product catalogue and pricing.',cols:[['name','Product'],['type','Type'],['price','Sales price','m'],['cost','Cost price','m']],f:[['name','Name'],['type','Type','s',['Software','Service']],['price','Sales price','n'],['cost','Cost price','n']]},
+ plans:{t:'Plans',s:'plan',d:'Recurring billing plans.',cols:[['name','Plan'],['price','Price','m'],['period','Period'],['min','Min. qty'],['status','Status','s']],f:[['name','Name'],['price','Price','n'],['period','Billing period','s',['Monthly','Yearly']],['min','Minimum quantity','n'],['status','Status','s',['Available','Disabled']]],used:r=>db.subscriptions.some(s=>s.plan===r.name)},
+ subscriptions:{t:'Subscriptions',s:'subscription',d:'Track and manage customer subscriptions.',cols:[['id','Number'],['customer','Customer'],['plan','Plan'],['start','Start'],['expiry','Expiry'],['amount','Amount','m'],['status','Status','s']],f:[['customer','Customer','s',cNames],['plan','Plan','s',pNames],['start','Start date','d'],['expiry','Expiry date','d'],['terms','Payment terms','s',['Immediate','Net 15','Net 30']],['status','Status','s',['Draft','Quotation','Confirmed','Active','Closed','Cancelled']]],
+  v:o=>o.expiry<=o.start?'Expiry must be after the start date.':'',post:o=>({amount:planOf(o).price||0}),pre:'SUB'},
+ invoices:{t:'Invoices',s:'invoice',d:'Billing, collection and balances.',cols:[['id','Invoice'],['customer','Customer'],['date','Date'],['due','Due'],['amount','Amount','m'],['paid','Paid','m'],['status','Status','s']],f:[['customer','Customer','s',cNames],['date','Invoice date','d'],['due','Due date','d'],['amount','Amount (incl. tax)','n']],
+  v:(o,r)=>o.due<o.date?'Due date cannot be before the invoice date.':r&&o.amount<r.paid?'Amount cannot be less than what is already paid.':'',init:()=>({paid:0}),pre:'INV'},
+ payments:{t:'Payments',s:'payment',d:'Payment history.',cols:[['id','Payment'],['date','Date'],['invoice','Invoice'],['customer','Customer'],['method','Method'],['amount','Amount','m'],['status','Status','s']]},
+ taxes:{t:'Taxes',s:'tax',d:'Tax rates applied to invoices.',cols:[['name','Tax'],['rate','Rate','p'],['applies','Applies to']],f:[['name','Name'],['rate','Rate (%)','n'],['applies','Applies to']],pre:'TAX'},
+ discounts:{t:'Discounts',s:'discount',d:'Discount rules and usage.',cols:[['name','Discount'],['type','Type'],['value','Value'],['limit','Usage limit'],['used','Used'],['status','Status','s']],f:[['name','Name'],['type','Type','s',['Percentage','Fixed']],['value','Value','n'],['limit','Usage limit','n'],['status','Status','s',['Active','Disabled']]],init:()=>({used:0}),pre:'DSC'},
+ customers:{t:'Customers',s:'customer',d:'Customer directory.',cols:[['name','Customer'],['email','Email'],['phone','Phone']],f:[['name','Company name'],['email','Email','e'],['phone','Phone','',null,1]],used:r=>db.subscriptions.some(s=>s.customer===r.name)||db.invoices.some(s=>s.customer===r.name),pre:'CUS'},
+ staff:{t:'Staff',s:'staff member',d:'Staff roster. New staff sign in with the temporary password Staff@123.',cols:[['id','Employee ID'],['name','Name'],['email','Email'],['phone','Phone'],['status','Status','s']],f:[['name','Name'],['email','Email','e'],['phone','Phone','',null,1],['status','Status','s',['Active','Disabled']]],pre:'EMP'}};
+
+/* ---------- auth ---------- */
+const pwOk=p=>p.length>=8&&/[a-z]/.test(p)&&/[A-Z]/.test(p)&&/\d/.test(p);
+const mailOk=e=>/^\S+@\S+\.\S+$/.test(e);
+let upRole='Customer',loc='';
+function authTab(t){$('inForm').classList.toggle('hidden',t!=='in');$('upForm').classList.toggle('hidden',t!=='up');$('tabIn').classList.toggle('on',t==='in');$('tabUp').classList.toggle('on',t==='up')}
+function setRole(r){upRole=r;document.querySelectorAll('#upForm [data-r]').forEach(x=>x.classList.toggle('hidden',!x.dataset.r.split(' ').includes(r)));document.querySelectorAll('#roleSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===r));$('upErr').textContent=''}
+function fill(e,p){$('inEmail').value=e;$('inPw').value=p;$('inErr').textContent=''}
+function locate(){const er=$('upErr');if(!navigator.geolocation)return er.textContent='Location is not supported in this browser.';
+ navigator.geolocation.getCurrentPosition(p=>{loc=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5);$('upLoc').textContent='Location captured ('+loc+')';er.textContent=''},()=>er.textContent='Location permission was denied. You can still type your address.')}
+function doLogin(ev){ev.preventDefault();const id=$('inEmail').value.trim().toLowerCase(),p=$('inPw').value;
+ if(!id||!p)return $('inErr').textContent='Enter your username and password.';
+ const u=db.users.find(x=>(x.email===id||(x.empid&&x.empid.toLowerCase()===id))&&x.pw===p);
+ if(!u)return $('inErr').textContent='Incorrect username or password.';
+ if(u.role==='Staff'&&(db.staff.find(s=>s.email===u.email)||{}).status==='Disabled')return $('inErr').textContent='This employee account is disabled.';
+ start(u)}
+function doSignup(ev){ev.preventDefault();const er=$('upErr'),n=$('upName').value.trim(),e=$('upEmail').value.trim().toLowerCase(),ph=$('upPhone').value.replace(/[\s-]/g,'').replace(/^\+?91/,''),p=$('upPw').value,r=upRole;
+ if(!n)return er.textContent='Name is required.';
+ if(!mailOk(e))return er.textContent='Enter a valid email address.';
+ if(!/^[6-9]\d{9}$/.test(ph))return er.textContent='Enter a valid 10-digit mobile number.';
+ if(db.users.some(u=>u.email===e))return er.textContent='An account with this email already exists.';
+ const addr=$('upAddr').value.trim();let u={name:n,email:e,pw:p,phone:ph};
+ if(r==='Employee'){const id=$('upEmp').value.trim().toUpperCase();
+  if(!/^EMP\d{3,}$/.test(id))return er.textContent='Employee ID must look like EMP002.';
+  if(db.staff.some(x=>x.id===id)||db.users.some(x=>x.empid===id))return er.textContent='That Employee ID is already registered.';
+  u={...u,role:'Staff',empid:id}}
+ else{if(!addr)return er.textContent='Address is required.';
+  if(r==='Admin'){const g=$('upGpay').value.trim(),a=$('upAad').value.replace(/\s/g,'');
+   if(!/^[\w.\-]{2,}@[a-z]{2,}$/i.test(g))return er.textContent='Enter a valid GPay/UPI ID, e.g. name@okbank.';
+   if(!/^\d{12}$/.test(a))return er.textContent='Aadhaar number must be 12 digits.';
+   u={...u,role:'Admin',gpay:g,aadhaar4:a.slice(-4),address:addr,loc}}
+  else u={...u,role:'Customer',address:addr,loc}}
+ if(!pwOk(p))return er.textContent='Password needs 8+ characters with A–Z, a–z and 0–9.';
+ if(p!==$('upPw2').value)return er.textContent='Passwords do not match.';
+ if(r==='Employee')db.staff.push({id:u.empid,name:n,email:e,phone:ph,status:'Active'});
+ if(r==='Customer'){const co=$('upCo').value.trim()||n;let c=db.customers.find(x=>x.name.toLowerCase()===co.toLowerCase());
+  if(!c){c={id:uid('CUS'),name:co,email:e,phone:ph,address:addr};db.customers.push(c)}u.company=c.name}
+ db.users.push(u);save();start(u)}
+function start(u){currentUser=u;try{sessionStorage.setItem('bl_s',u.email)}catch(e){}
+ $('authScreen').classList.add('hidden');$('appContainer').classList.remove('hidden');
+ $('roleBadge').textContent=u.role==='Staff'?'Employee':u.role;$('userAvatar').textContent=u.name.charAt(0).toUpperCase();
+ current=NAV[u.role][0][0];render();notify('Welcome, '+u.name)}
+function logout(){currentUser=null;try{sessionStorage.removeItem('bl_s')}catch(e){}
+ $('authScreen').classList.remove('hidden');$('appContainer').classList.add('hidden');$('inPw').value='';notify('Signed out')}
+
+/* ---------- navigation ---------- */
+const NAV={Admin:[['Dashboard','◫'],['Products','▦'],['Plans','◷'],['Subscriptions','↻'],['Invoices','▣'],['Payments','₹'],['Taxes','%'],['Discounts','◇'],['Customers','♙'],['Staff','♧'],['Reports','▥'],['Rules & Regulations','⚖'],['Settings','⚙']],
+ Staff:[['My Work','◫'],['Customers','♙'],['Subscriptions','↻'],['Quotations','▤'],['Invoices','▣'],['Payments','₹'],['Overdue','!'],['Reports','▥'],['Rules & Regulations','⚖']],
+ Customer:[['Portal Overview','◫'],['My Subscriptions','↻'],['My Invoices','▣'],['My Payments','₹'],['Rules & Regulations','⚖']]};
+function toggleMenu(){$('sidebar').classList.toggle('open');$('shade').classList.toggle('show')}
+function nav(){$('navigation').innerHTML=`<div class="nav-label">${currentUser.role.toUpperCase()} PORTAL</div>`+NAV[currentUser.role].map(([n,i])=>`<button class="${current===n?'active':''}" ${current===n?'aria-current="page"':''} onclick="go('${n.replace(/'/g,"\\'")}')"><span class="ico">${i}</span>${esc(n)}</button>`).join('')}
+function go(n){if(!NAV[currentUser.role].some(x=>x[0]===n))return;current=n;search='';sf='';render();$('sidebar').classList.remove('open');$('shade').classList.remove('show');scrollTo(0,0)}
+function render(){sync();nav();$('topTitle').textContent=current;$('content').innerHTML=page(current)}
+function notify(s){const t=$('toast');t.textContent=s;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2800)}
+
+/* ---------- pages ---------- */
+const head=(t,s,a='')=>`<div class="page-head"><div><h1>${esc(t)}</h1><p>${esc(s)}</p></div>${a}</div>`;
+const status=s=>`<span class="status ${esc(s)}">${esc(s)}</span>`;
+const metric=(l,v,f,i)=>`<div class="card"><span class="metric-icon" aria-hidden="true">${i}</span><div class="metric-label">${l}</div><div class="metric-value">${v}</div><div class="metric-foot">${f}</div></div>`;
+const short=v=>'₹'+(v>=1e5?(v/1e5).toFixed(1)+'L':v>=1e3?(v/1e3).toFixed(0)+'k':v);
+const bars=(d,f=x=>x)=>{const m=Math.max(1,...d.map(x=>x[1]));return `<div class="bars" role="img" aria-label="Bar chart">${d.map(([l,v])=>`<div class="bar"><b>${f(v)}</b><div class="col"><i style="height:${v/m*100}%"></i></div><span title="${esc(l)}">${esc(l)}</span></div>`).join('')}</div>`};
+const mine=r=>currentUser.role!=='Customer'||r.customer===currentUser.company;
+const payBtn=r=>r.paid<r.amount?`<button class="btn small primary" onclick="openPay('${r.id}')">${currentUser.role==='Customer'?'Pay now':'Record payment'}</button>`:'';
+const cancelBtn=r=>currentUser.role==='Customer'&&['Active','Confirmed'].includes(r.status)?`<button class="btn small danger" onclick="cancelSub('${r.id}')">Cancel</button>`:'';
+const months=()=>{const[y,m]=TODAY.split('-').map(Number);return[5,4,3,2,1,0].map(i=>new Date(Date.UTC(y,m-1-i,1)).toISOString().slice(0,7))};
+const monthLabel=k=>new Date(k+'-01').toLocaleString('en-US',{month:'short',timeZone:'UTC'});
+const byMonth=P=>months().map(k=>[monthLabel(k),P.filter(p=>p.date.startsWith(k)).reduce((a,p)=>a+p.amount,0)]);
+
+function page(n){const adm=currentUser.role==='Admin',cu=currentUser.role==='Customer',none={create:0,edit:0,del:0};
+ switch(n){
+  case 'Dashboard':case 'My Work':case 'Portal Overview':return dash();
+  case 'Products':return list('products');case 'Plans':return list('plans');case 'Taxes':return list('taxes');case 'Discounts':return list('discounts');
+  case 'Staff':return list('staff');case 'Customers':return list('customers',{del:adm});
+  case 'Subscriptions':return list('subscriptions',{del:adm});
+  case 'Quotations':return list('subscriptions',{title:'Quotations',desc:'Draft and quotation-stage subscriptions.',filter:s=>['Quotation','Draft'].includes(s.status),del:0});
+  case 'Invoices':return list('invoices',{del:adm,extra:payBtn});
+  case 'Overdue':return list('invoices',{...none,title:'Overdue',desc:'Invoices past their due date.',filter:i=>i.status==='Overdue',extra:payBtn});
+  case 'Payments':return list('payments',none);
+  case 'My Subscriptions':return list('subscriptions',{...none,title:'My Subscriptions',desc:'Your software subscriptions and licences.',filter:mine,extra:cancelBtn});
+  case 'My Invoices':return list('invoices',{...none,title:'My Invoices',desc:'Invoices billed to your company.',filter:mine,extra:payBtn});
+  case 'My Payments':return list('payments',{...none,title:'My Payments',desc:'Payments received from your company.',filter:mine});
+  case 'Reports':return reports();case 'Settings':return settings();case 'Rules & Regulations':return rules();}
+ return head(n,'')}
+
+function dash(){const cu=currentUser.role==='Customer',sc=a=>a.filter(mine);
+ const S=sc(db.subscriptions),I=sc(db.invoices),P=sc(db.payments),act=S.filter(s=>s.status==='Active'),od=I.filter(i=>i.status==='Overdue');
+ const mrr=act.reduce((a,s)=>a+(planOf(s).period==='Yearly'?s.amount/12:s.amount),0),out=I.reduce((a,i)=>a+i.amount-i.paid,0);
+ const t=cu?['Welcome, '+currentUser.name,currentUser.company+' customer portal.']:currentUser.role==='Staff'?['Staff workspace','Your collection priorities and daily work.']:['Finance overview','System overview for Brightloop Software.'];
+ const rows=od.slice(0,6).map(i=>`<tr><td>${esc(i.id)}</td><td>${esc(i.due)}</td><td>${money(i.amount-i.paid)}</td><td class="act">${payBtn(i)}</td></tr>`).join('');
+ return head(...t)+`<div class="cards">${metric('Active subscriptions',act.length,'Currently running','↻')}${metric('Monthly recurring revenue',money(Math.round(mrr)),'Yearly plans ÷ 12','₹')}${metric('Revenue collected',money(P.reduce((a,p)=>a+p.amount,0)),'All payments','↗')}${metric('Outstanding',money(out),'Unpaid balance','◷')}${metric('Overdue invoices',od.length,'Need follow-up','!')}</div>
+ <div class="grid-2"><div class="panel"><h3>Collections, last 6 months</h3>${bars(byMonth(P),short)}</div>
+ <div class="panel"><h3>Overdue invoices</h3><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Due</th><th>Balance</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4"><div class="empty">Nothing overdue 🎉</div></td></tr>'}</tbody></table></div></div></div>`}
+
+function reports(){const I=db.invoices,cnt=(a,f)=>[...new Set(a.map(f))].map(k=>[k,a.filter(x=>f(x)===k).length]);
+ return head('Reports','Revenue, billing and subscription mix.')+`<div class="panel"><h3>Collections by month</h3>${bars(byMonth(db.payments),short)}</div>
+ <div class="grid-2" style="grid-template-columns:1fr 1fr"><div class="panel"><h3>Invoices by status</h3>${bars(cnt(I,x=>x.status))}</div><div class="panel"><h3>Subscriptions by plan</h3>${bars(cnt(db.subscriptions,x=>x.plan.split(' ')[0]+' '+(x.plan.split(' ')[1]||'').slice(0,3)))}</div></div>`}
+
+function settings(){return head('Settings','Account details and data management.','<button class="btn danger" onclick="resetData()">Reset demo data</button>')+`<div class="panel"><h3>Signed in as</h3><p>${esc(currentUser.name)} · ${esc(currentUser.email)} · ${esc(currentUser.role)}</p></div>
+ <div class="panel"><h3>Audit trail</h3><div class="table-wrap"><table><thead><tr><th>Time</th><th>User</th><th>Action</th></tr></thead><tbody>${db.audit.slice(0,15).map(a=>`<tr><td>${esc(a.t)}</td><td>${esc(a.u)}</td><td>${esc(a.a)}</td></tr>`).join('')||'<tr><td colspan="3"><div class="empty">No activity yet</div></td></tr>'}</tbody></table></div></div>`}
+function resetData(){if(!confirm('Reset all data to the demo set? Accounts you created will be removed.'))return;db=seed();sync();save();log('Reset demo data');notify('Demo data restored');logout()}
+
+function rules(){return head('Rules & Regulations','Brightloop Software governance and compliance policies.')+`<div class="panel rules-box"><h3>1. Subscription &amp; billing</h3><ul><li>Recurring subscriptions renew automatically unless cancelled at least 7 days before the billing date.</li><li>Payments are due within the agreed terms (Net 15 by default). Accounts more than 30 days overdue may be suspended.</li><li>Refund requests for enterprise packages must be filed within 14 business days of purchase.</li></ul>
+ <h3>2. Account security</h3><ul><li>Passwords need at least 8 characters with upper-case letters, lower-case letters and numbers.</li><li>Sharing credentials outside your organisation is prohibited and may lead to account revocation.</li></ul>
+ <h3>3. Data privacy &amp; audit</h3><ul><li>Personal and financial records must be encrypted at rest and in transit in production deployments.</li><li>Administrative changes, invoice edits and payments are written to the audit trail.</li></ul></div>`}
+
+/* ---------- generic list + CRUD ---------- */
+function list(k,o={}){const e=E[k];o={create:1,edit:1,del:1,...o};if(!e.f)o.create=o.edit=o.del=0;view={k,o};
+ const sel=e.cols.some(c=>c[0]==='status')?`<select aria-label="Filter by status" onchange="sf=this.value;$('tbl').innerHTML=tbl()"><option value="">All statuses</option>${[...new Set(db[k].filter(o.filter||(()=>1)).map(r=>r.status))].map(s=>`<option>${esc(s)}</option>`).join('')}</select>`:'';
+ return head(o.title||e.t,o.desc||e.d,o.create?`<button class="btn primary" onclick="openForm('${k}')">+ New ${e.s}</button>`:'')+`<div class="panel"><div class="filters"><input type="search" placeholder="Search…" aria-label="Search" oninput="search=this.value;$('tbl').innerHTML=tbl()">${sel}</div><div id="tbl">${tbl()}</div></div>`}
+function tbl(){const{k,o}=view,e=E[k];let rows=db[k].filter(o.filter||(()=>1));const q=search.toLowerCase();
+ if(q)rows=rows.filter(r=>Object.values(r).join(' ').toLowerCase().includes(q));if(sf)rows=rows.filter(r=>r.status===sf);
+ const acts=o.edit||o.del||o.extra,cell=(r,[c,,t])=>`<td>${t==='m'?money(r[c]):t==='s'?status(r[c]):t==='p'?r[c]+'%':esc(r[c]||'—')}</td>`;
+ return `<div class="table-wrap"><table><thead><tr>${e.cols.map(c=>`<th scope="col">${c[1]}</th>`).join('')}${acts?'<th></th>':''}</tr></thead><tbody>${rows.map(r=>`<tr>${e.cols.map(c=>cell(r,c)).join('')}${acts?`<td class="act">${(o.extra?o.extra(r):'')}${o.edit?`<button class="btn small" onclick="openForm('${k}','${r.id}')">Edit</button>`:''}${o.del?`<button class="btn small danger" onclick="delRecord('${k}','${r.id}')">Delete</button>`:''}</td>`:''}</tr>`).join('')||`<tr><td colspan="${e.cols.length+1}"><div class="empty">No records found</div></td></tr>`}</tbody></table></div>`}
+function showModal(){$('modal').style.display='grid';const f=$('modalBody').querySelector('input,select');f&&f.focus()}
+function closeModal(){$('modal').style.display='none'}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
+const ferr=m=>{$('formErr').textContent=m;return false};
+function openForm(k,id){const e=E[k],r=id?db[k].find(x=>x.id===id):{};modal={k,id};$('modalTitle').textContent=(id?'Edit ':'New ')+e.s;
+ $('modalBody').innerHTML=`<div class="form-grid">${e.f.map(([n,l,t,op,opt])=>{const v=r[n]??(t==='d'?TODAY:''),os=typeof op==='function'?op():op;
+  return `<div class="field"><label for="f_${n}">${l}${opt?' (optional)':''}</label>${t==='s'?`<select id="f_${n}">${os.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`:`<input id="f_${n}" type="${{n:'number',d:'date',e:'email'}[t]||'text'}" value="${esc(v)}" ${t==='n'?'min="0" step="any"':''}>`}</div>`}).join('')}</div><div class="err" id="formErr" role="alert"></div>`;showModal()}
+function saveRecord(){if(modal.pay)return savePay();const e=E[modal.k],o={},ex=modal.id?db[modal.k].find(x=>x.id===modal.id):null;
+ for(const[n,l,t,,opt]of e.f){let v=$('f_'+n).value.trim();if(!v&&!opt)return ferr(l+' is required.');
+  if(t==='n'){v=+v;if(!(v>=0))return ferr(l+' must be a non-negative number.')}
+  if(t==='e'&&!mailOk(v))return ferr('Enter a valid email address.');o[n]=v}
+ if(modal.k==='staff'&&db.users.some(u=>u.email===o.email.toLowerCase()&&(!ex||u.email!==ex.email)))return ferr('That email is already in use.');
+ const m=e.v&&e.v(o,ex);if(m)return ferr(m);
+ if(ex){if(modal.k==='staff'){const u=db.users.find(x=>x.email===ex.email);if(u){u.email=o.email.toLowerCase();u.name=o.name}}Object.assign(ex,o,e.post?e.post(o):{});log('Edited '+ex.id)}
+ else{const id=modal.k==='staff'?uid('EMP'):uid(e.pre||'REC'),r={id,...o,...(e.init?e.init(o):{}),...(e.post?e.post(o):{})};db[modal.k].push(r);
+  if(modal.k==='staff')db.users.push({name:o.name,email:o.email.toLowerCase(),pw:'Staff@123',role:'Staff'});log('Created '+id)}
+ save();closeModal();render();notify('Saved')}
+function delRecord(k,id){const e=E[k],r=db[k].find(x=>x.id===id);if(e.used&&e.used(r))return notify('Cannot delete: this record is used by other records.');
+ if(!confirm('Delete this '+e.s+'? This cannot be undone.'))return;db[k]=db[k].filter(x=>x.id!==id);
+ if(k==='staff')db.users=db.users.filter(u=>u.email!==r.email);log('Deleted '+id);save();render();notify('Deleted')}
+function cancelSub(id){if(!confirm('Cancel this subscription?'))return;db.subscriptions.find(s=>s.id===id).status='Cancelled';log('Cancelled '+id);save();render();notify('Subscription cancelled')}
+function openPay(id){const i=db.invoices.find(x=>x.id===id),bal=i.amount-i.paid;modal={pay:id};$('modalTitle').textContent='Payment for '+id;
+ $('modalBody').innerHTML=`<p>Balance due: <b>${money(bal)}</b></p><div class="form-grid"><div class="field"><label for="p_amt">Amount</label><input id="p_amt" type="number" min="1" step="any" value="${bal}"></div><div class="field"><label for="p_m">Method</label><select id="p_m">${['UPI','Card','Razorpay','Bank Transfer','Cash'].map(x=>`<option>${x}</option>`).join('')}</select></div></div><div class="err" id="formErr" role="alert"></div>`;showModal()}
+function savePay(){const i=db.invoices.find(x=>x.id===modal.pay),a=+$('p_amt').value,bal=i.amount-i.paid;
+ if(!(a>0))return ferr('Enter a valid amount.');if(a>bal)return ferr('Amount exceeds the balance due.');
+ i.paid+=a;db.payments.push({id:uid('PAY'),date:TODAY,invoice:i.id,customer:i.customer,method:$('p_m').value,amount:a,status:'Paid'});
+ log('Payment '+money(a)+' on '+i.id);save();closeModal();render();notify('Payment recorded')}
+
+/* ---------- init ---------- */
+load();setRole('Customer');
+try{const e=sessionStorage.getItem('bl_s'),u=e&&db.users.find(x=>x.email===e);if(u)start(u)}catch(e){}
+</script>
+</body>
+</html>
