@@ -1,0 +1,16 @@
+PRAGMA foreign_keys=ON;
+CREATE TABLE IF NOT EXISTS customers(id INTEGER PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL,phone TEXT);
+CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER PRIMARY KEY,number TEXT UNIQUE,customer_id INTEGER REFERENCES customers(id),plan TEXT,start_date TEXT,expiry_date TEXT,status TEXT CHECK(status IN ('Draft','Quotation','Confirmed','Active','Closed')),price INTEGER NOT NULL,frequency TEXT DEFAULT 'Monthly',tax_rate REAL DEFAULT 18,discount INTEGER DEFAULT 0,next_billing_date TEXT);
+CREATE TABLE IF NOT EXISTS invoices(id INTEGER PRIMARY KEY,invoice_number TEXT UNIQUE,subscription_id INTEGER REFERENCES subscriptions(id),customer_id INTEGER REFERENCES customers(id),subtotal INTEGER,tax INTEGER,discount INTEGER,total INTEGER CHECK(total>=0),amount_paid INTEGER DEFAULT 0,due_date TEXT,status TEXT,pay_token TEXT UNIQUE NOT NULL,billing_period TEXT,lines TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(subscription_id,billing_period));
+CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,invoice_id INTEGER REFERENCES invoices(id),amount INTEGER,currency TEXT DEFAULT 'INR',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS payments(id INTEGER PRIMARY KEY,gateway_payment_id TEXT UNIQUE,gateway_order_id TEXT,invoice_id INTEGER REFERENCES invoices(id),method TEXT,amount INTEGER,currency TEXT DEFAULT 'INR',status TEXT,paid_on TEXT,note TEXT,raw_payload TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS refunds(id TEXT PRIMARY KEY,payment_id TEXT,amount INTEGER,payload TEXT);
+CREATE TABLE IF NOT EXISTS webhook_events(event_id TEXT PRIMARY KEY,type TEXT,payload TEXT,processed_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS email_outbox(id INTEGER PRIMARY KEY,invoice_id INTEGER REFERENCES invoices(id),kind TEXT,day TEXT,status TEXT DEFAULT 'pending',attempts INTEGER DEFAULT 0,UNIQUE(invoice_id,kind,day));
+CREATE INDEX IF NOT EXISTS inv_customer ON invoices(customer_id);
+CREATE INDEX IF NOT EXISTS inv_status_due ON invoices(status,due_date);
+CREATE INDEX IF NOT EXISTS inv_due ON invoices(due_date);
+CREATE INDEX IF NOT EXISTS payment_invoice ON payments(invoice_id);
+CREATE INDEX IF NOT EXISTS payment_date ON payments(paid_on);
+CREATE INDEX IF NOT EXISTS payment_status ON payments(status);
+CREATE INDEX IF NOT EXISTS subscription_customer ON subscriptions(customer_id);
