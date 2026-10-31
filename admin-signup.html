@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Sign up · Brightloop Software</title>
+<style>
+:root{--bg:#FAF6EE;--card:#FFFDF8;--border:#E8DFCF;--text:#3B3226;--muted:#8A7E6C;--teal:#2F6B6B;--teal-h:#255757;--danger:#B4553E;--ok:#4F7A5C;--head:#F2EADD}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;min-height:100vh}
+#app{max-width:440px;margin:0 auto;padding:32px 16px 48px}
+.wordmark{font-size:1.5rem;font-weight:700;text-align:center;margin:8px 0 20px}
+.wordmark span{color:var(--teal)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(59,50,38,.08);padding:28px}
+@media(max-width:380px){.card{padding:20px}}
+h1{margin:0 0 6px;font-size:1.4rem}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.95rem}
+.field{margin-bottom:16px}
+label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
+input{width:100%;font:inherit;color:var(--text);background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 13px;outline:none}
+input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(47,107,107,.25)}
+input.bad{border-color:var(--danger)}
+.err{color:var(--danger);font-size:.83rem;margin-top:5px}
+.err:empty{display:none}
+.hint{font-size:.83rem;margin:-10px 0 16px;color:var(--muted)}
+.hint.ok{color:var(--ok)} .hint.no{color:var(--danger)}
+.pw{position:relative}
+.pw input{padding-right:68px}
+.toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--teal);font:inherit;font-size:.85rem;font-weight:600;padding:6px 8px;border-radius:8px;cursor:pointer}
+.toggle:hover{background:var(--head)}
+button:focus-visible,a:focus-visible{outline:3px solid rgba(47,107,107,.45);outline-offset:2px}
+.btn{width:100%;background:var(--teal);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover:not(:disabled){background:var(--teal-h)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.link{color:var(--teal)} .link:hover{color:var(--teal-h)}
+.center{text-align:center;margin-top:16px}
+.banner{border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:.92rem}
+.banner[hidden]{display:none}
+.banner.success{background:#E4EFE6;color:#35573F;border:1px solid #BFD6C4}
+.banner.error{background:#F8E6E0;color:#8A3A27;border:1px solid #E9C3B8}
+.checklist{list-style:none;margin:8px 0 0;padding:0;font-size:.85rem;color:var(--muted)}
+.checklist li{padding-left:22px;position:relative;margin:2px 0}
+.checklist li::before{content:"○";position:absolute;left:2px}
+.checklist li.pass{color:var(--ok)}
+.checklist li.pass::before{content:"✓";font-weight:700}
+</style>
+</head>
+<body>
+<main id="app">
+  <div class="wordmark">Bright<span>loop</span> Software</div>
+  <section class="card" aria-labelledby="t">
+    <div class="banner" id="banner" role="alert" hidden></div>
+    <h1 id="t">Admin sign up</h1>
+    <p class="sub">Create your administrator account.</p>
+    <form id="f" novalidate>
+      <div class="field"><label for="name">Full name</label><input id="name" autocomplete="name"><div class="err" id="name-err"></div></div>
+      <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"><div class="err" id="email-err"></div></div>
+      <div class="field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel"><div class="err" id="phone-err"></div></div>
+      <div class="field"><label for="emp">Employee ID</label><input id="emp"><div class="err" id="emp-err"></div></div>
+      <div class="field"><label for="aad">Aadhaar</label><input id="aad" inputmode="numeric" placeholder="XXXX XXXX XXXX" maxlength="14" autocomplete="off"><div class="err" id="aad-err"></div></div>
+      <div class="field"><label for="upi">GPay / UPI ID</label><input id="upi" placeholder="name@bank" autocomplete="off"><div class="err" id="upi-err"></div></div>
+      <div class="field"><label for="pw">Password</label>
+        <div class="pw"><input id="pw" type="password" autocomplete="new-password"><button type="button" class="toggle" data-for="pw" aria-label="Show password">Show</button></div>
+        <div class="err" id="pw-err"></div>
+        <ul class="checklist" id="cl"><li data-k="len">More than 8 characters</li><li data-k="upper">One uppercase letter</li><li data-k="lower">One lowercase letter</li><li data-k="spec">One special character</li></ul></div>
+      <div class="field"><label for="pw2">Confirm password</label>
+        <div class="pw"><input id="pw2" type="password" autocomplete="new-password"><button type="button" class="toggle" data-for="pw2" aria-label="Show password">Show</button></div>
+        <div class="err" id="pw2-err"></div></div>
+      <div class="hint" id="match"></div>
+      <button class="btn" id="go" type="submit">Create admin account</button>
+    </form>
+    <p class="center">Already have an account? <a class="link" href="index.html">Login</a></p>
+    <p class="center" style="margin-top:8px">Not an admin? <a class="link" href="index.html?screen=signup">Customer sign up</a> · <a class="link" href="staff-signup.html">Staff sign up</a></p>
+  </section>
+</main>
+<script>
+/* Validators */
+const RE = {
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  phone: /^[+]?[\d\s-]{7,15}$/,
+  aadhaar: /^\d{12}$/,
+  upi: /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z]{2,64}$/
+};
+const RULES = [
+  { k: 'len',   t: p => p.length > 8 },
+  { k: 'upper', t: p => /[A-Z]/.test(p) },
+  { k: 'lower', t: p => /[a-z]/.test(p) },
+  { k: 'spec',  t: p => /[^A-Za-z0-9]/.test(p) }
+];
+const $ = id => document.getElementById(id);
+const pwOk = p => RULES.every(r => r.t(p));
+const fmtAadhaar = v => v.replace(/\D/g, '').slice(0, 12).replace(/(\d{4})(?=\d)/g, '$1 ');
+
+/* Field checks: return an error message or '' */
+const specs = [
+  { id: 'name',  check: v => v.trim() ? '' : 'Full name is required.' },
+  { id: 'email', check: v => !v.trim() ? 'Email is required.' : RE.email.test(v.trim()) ? '' : 'Enter a valid email address.' },
+  { id: 'phone', check: v => !v.trim() ? 'Phone is required.' : RE.phone.test(v.trim()) ? '' : 'Enter a valid phone number (7–15 digits).' },
+  { id: 'emp',   check: v => v.trim() ? '' : 'Employee ID is required.' },
+  { id: 'aad',   check: v => !v.trim() ? 'Aadhaar is required.' : RE.aadhaar.test(v.replace(/\s/g, '')) ? '' : 'Aadhaar must be 12 digits.' },
+  { id: 'upi',   check: v => !v.trim() ? 'UPI ID is required.' : RE.upi.test(v.trim()) ? '' : 'Enter a valid UPI ID (name@bank).' },
+  { id: 'pw',    check: v => pwOk(v) ? '' : 'Password does not meet all requirements.' },
+  { id: 'pw2',   check: v => v && v === $('pw').value ? '' : 'Passwords do not match.' }
+];
+const touched = new Set();
+
+function refresh() {
+  let ok = true;
+  specs.forEach(s => {
+    const msg = s.check($(s.id).value);
+    if (msg) ok = false;
+    const show = touched.has(s.id) && msg;
+    $(s.id + '-err').textContent = show ? msg : '';
+    $(s.id).classList.toggle('bad', !!show);
+  });
+  RULES.forEach(r => document.querySelector(`#cl [data-k="${r.k}"]`).classList.toggle('pass', r.t($('pw').value)));
+  const m = $('match');
+  if ($('pw2').value) {
+    const same = $('pw').value === $('pw2').value;
+    m.textContent = same ? '✓ Passwords match' : '✗ Passwords do not match';
+    m.className = 'hint ' + (same ? 'ok' : 'no');
+  } else { m.textContent = ''; m.className = 'hint'; }
+  $('go').disabled = !ok;
+}
+specs.forEach(s => {
+  $(s.id).addEventListener('input', () => {
+    if (s.id === 'aad') $('aad').value = fmtAadhaar($('aad').value); // XXXX XXXX XXXX grouping
+    touched.add(s.id); refresh();
+  });
+  $(s.id).addEventListener('blur', () => { touched.add(s.id); refresh(); });
+});
+document.querySelectorAll('.toggle').forEach(b => b.addEventListener('click', () => {
+  const i = $(b.dataset.for), show = i.type === 'password';
+  i.type = show ? 'text' : 'password';
+  b.textContent = show ? 'Hide' : 'Show';
+  b.setAttribute('aria-label', (show ? 'Hide' : 'Show') + ' password');
+}));
+
+/* Submit: no backend yet. Replace the body of this handler with your API call. */
+$('f').addEventListener('submit', e => {
+  e.preventDefault();
+  if ($('go').disabled) return;
+  const data = {
+    name: $('name').value.trim(), email: $('email').value.trim(), phone: $('phone').value.trim(),
+    empid: $('emp').value.trim(), aadhaar: $('aad').value.replace(/\s/g, ''), upi: $('upi').value.trim()
+  };
+  console.log('Admin sign-up (demo):', data);
+  const b = $('banner'); b.className = 'banner success'; b.hidden = false;
+  b.textContent = 'Admin account created. Redirecting to login…';
+  $('f').reset(); touched.clear(); refresh();
+  setTimeout(() => { location.href = 'index.html?screen=login&msg=admin'; }, 1800);
+});
+refresh();
+</script>
+</body>
+</html>
